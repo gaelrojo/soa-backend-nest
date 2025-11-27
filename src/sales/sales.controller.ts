@@ -11,7 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { SalesService } from './sales.service';
-import { CreateSaleDto } from './dto/create-sale.dto';
+import { CreateSaleDto } from '../dto/create-sale.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('sales')

@@ -1,24 +1,17 @@
+// src/main.ts
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Habilitar CORS
-  app.enableCors();
+  // Si tienes un prefijo global, coméntalo temporalmente
+  // app.setGlobalPrefix('api');  // ❌ Comenta esta línea
   
-  // Validación global
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
-
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
+  app.useGlobalPipes(new ValidationPipe());
+  
+  await app.listen(3000);
+  console.log(`Aplicación corriendo en: http://localhost:3000`);
 }
 bootstrap();
