@@ -1,4 +1,3 @@
-// src/roles/roles.module.ts
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RolesController } from './roles.controller';
