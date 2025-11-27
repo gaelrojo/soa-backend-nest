@@ -23,4 +23,3 @@ export class SaleItem extends Document {
 }
 
 export const SaleItemSchema = SchemaFactory.createForClass(SaleItem);
-

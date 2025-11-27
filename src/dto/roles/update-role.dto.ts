@@ -1,5 +1,26 @@
-// src/dto/roles/update-role.dto.ts
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateRoleDto } from './create-role.dto';
+import { 
+  IsString, 
+  IsBoolean, 
+  IsArray, 
+  IsOptional, 
+  MaxLength 
+} from 'class-validator';
 
-export class UpdateRoleDto extends PartialType(CreateRoleDto) {}
+export class UpdateRoleDto {
+  @IsString()
+  @IsOptional()
+  nombre?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200, { message: 'La descripción no puede exceder 200 caracteres' })
+  descripcion?: string;
+
+  @IsArray()
+  @IsOptional()
+  permisos?: string[];
+
+  @IsBoolean()
+  @IsOptional()
+  activo?: boolean;
+}

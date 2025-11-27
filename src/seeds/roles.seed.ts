@@ -1,86 +1,96 @@
-// src/seeds/roles.seed.ts
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { RolesService } from '../roles/roles.service';
 
-async function seedRoles() {
-  console.log('🌱 Iniciando seed de roles...');
-  
-  try {
-    const app = await NestFactory.createApplicationContext(AppModule);
-    const rolesService = app.get(RolesService);
+async function bootstrap() {
+  console.log('🚀 Iniciando aplicación para seed de roles...\n');
 
-    const rolesIniciales = [
-      {
-        slug: 'administrador',
-        descripcion: 'Acceso total al sistema',
-        permisos: [
-          'usuarios.crear',
-          'usuarios.editar',
-          'usuarios.eliminar',
-          'usuarios.listar',
-          'productos.crear',
-          'productos.editar',
-          'productos.eliminar',
-          'productos.listar',
-          'ventas.crear',
-          'ventas.cancelar',
-          'ventas.listar',
-          'ventas.reportes',
-          'roles.asignar',
-          'roles.modificar',
-          'reportes.generar',
-          'reportes.exportar',
-          'configuracion.modificar',
-        ],
-        activo: true,
-      },
-      {
-        slug: 'vendedor',
-        descripcion: 'Realiza ventas y consulta productos',
-        permisos: [
-          'productos.listar',
-          'productos.buscar',
-          'ventas.crear',
-          'ventas.listar_propias',
-          'perfil.editar',
-        ],
-        activo: true,
-      },
-      {
-        slug: 'consultor',
-        descripcion: 'Solo consulta reportes y estadísticas',
-        permisos: [
-          'productos.listar',
-          'ventas.listar',
-          'ventas.reportes',
-          'reportes.generar',
-          'reportes.exportar',
-        ],
-        activo: true,
-      },
-    ];
+  const app = await NestFactory.createApplicationContext(AppModule);
+  const rolesService = app.get(RolesService);
+
+  const rolesIniciales = [
+    {
+      nombre: 'admin',
+      descripcion: 'Administrador del sistema con acceso completo',
+      permisos: [
+        'crear_usuario',
+        'editar_usuario',
+        'eliminar_usuario',
+        'ver_usuarios',
+        'crear_venta',
+        'editar_venta',
+        'eliminar_venta',
+        'ver_ventas',
+        'ver_reportes',
+        'gestionar_productos',
+        'gestionar_roles',
+        'configuracion.sistema',
+      ],
+      activo: true,
+    },
+    {
+      nombre: 'vendedor',
+      descripcion: 'Vendedor con permisos básicos de venta',
+      permisos: [
+        'crear_venta',
+        'ver_ventas',
+        'ver_productos',
+        'productos.listar',
+        'ventas.listar',
+        'ventas.reportes',
+      ],
+      activo: true,
+    },
+    {
+      nombre: 'cajero',
+      descripcion: 'Cajero para operaciones de punto de venta',
+      permisos: [
+        'crear_venta',
+        'ver_ventas',
+        'ver_productos',
+        'cobrar',
+        'productos.listar',
+        'ventas.listar',
+      ],
+      activo: true,
+    },
+    {
+      nombre: 'gerente',
+      descripcion: 'Gerente con permisos de supervisión y consulta reportes y estadísticas',
+      permisos: [
+        'productos.listar',
+        'ventas.listar',
+        'ventas.reportes',
+        'reportes.general',
+        'reportes.exportar',
+      ],
+      activo: true,
+    },
+  ];
+
+  try {
+    console.log('📊 Verificando roles existentes...\n');
 
     for (const rol of rolesIniciales) {
       try {
-        const nuevoRol = await rolesService.create(rol);
-        console.log(`✅ Rol "${rol.slug}" creado exitosamente`);
-      } catch (error: any) {
-        if (error.message && error.message.includes('ya existe')) {
-          console.log(`⚠️  Rol "${rol.slug}" ya existe en la base de datos`);
+        await rolesService.create(rol);
+        console.log(`✅ Rol "${rol.nombre}" creado exitosamente`);
+      } catch (error) {
+        if (error.message.includes('ya existe')) {
+          console.log(`⚠️  Rol "${rol.nombre}" ya existe en la base de datos`);
         } else {
-          console.error(`❌ Error creando rol "${rol.slug}":`, error.message || error);
+          console.error(`❌ Error creando rol "${rol.nombre}":`, error.message);
         }
       }
     }
 
+    console.log('\n🎉 Proceso de seed completado\n');
+  } catch (error) {
+    console.error('\n❌ Error general en el seed:', error.message);
+  } finally {
     await app.close();
-    console.log('🎉 Seed de roles completado');
     process.exit(0);
-  } catch (error: any) {
-    console.error('❌ Error fatal en el seed:', error.message || error);
-    process.exit(1);
   }
 }
 
-seedRoles();
+bootstrap();
